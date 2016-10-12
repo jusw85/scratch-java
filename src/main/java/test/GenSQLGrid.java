@@ -3,6 +3,7 @@ package test;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 public class GenSQLGrid {
 
@@ -17,7 +18,7 @@ public class GenSQLGrid {
         String table = "mpa_hackathon_2015.grid";
         File out = new File("grid.sql");
         FileUtils.deleteQuietly(out);
-        FileUtils.writeStringToFile(out, "BEGIN;\r\n", true);
+        FileUtils.writeStringToFile(out, "BEGIN;\r\n", StandardCharsets.UTF_8, true);
 
         for (int i = 0; i < 8; i++, zoomlevel += 1) {
             interval /= 2.0;
@@ -43,11 +44,11 @@ public class GenSQLGrid {
                     sb.append(")') ");
                     sb.append(" ),4326), '" + zoomlevel + "'); ");
                     FileUtils.writeStringToFile(out, sb.toString() + "\r\n",
-                            true);
+                            StandardCharsets.UTF_8, true);
                 }
             }
         }
-        FileUtils.writeStringToFile(out, "COMMIT;\r\n", true);
+        FileUtils.writeStringToFile(out, "COMMIT;\r\n", StandardCharsets.UTF_8, true);
     }
 
 }

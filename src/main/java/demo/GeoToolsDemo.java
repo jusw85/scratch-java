@@ -10,11 +10,12 @@ import org.geotools.geojson.geom.GeometryJSON;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 public class GeoToolsDemo {
 
     public static void main(String[] args) throws Exception {
-        String geoJson = FileUtils.readFileToString(new File("etc/geojson.json"));
+        String geoJson = FileUtils.readFileToString(new File("etc/geojson.json"), StandardCharsets.UTF_8);
         JSONObject geometryObj = new JSONObject(geoJson);
         JSONObject polygonObj = geometryObj.getJSONObject("geometry");
 

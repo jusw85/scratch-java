@@ -26,41 +26,16 @@
         </Console>
     </Appenders>
     <Loggers>
-        <!--<Logger name="org.apache.camel" level="info" additivity="false"-->
-                <!--includeLocation="true">-->
-            <!--<AppenderRef ref="stdout" level="debug"/>-->
-            <!--&lt;!&ndash;<AppenderRef ref="debuglog" level="debug" />&ndash;&gt;-->
-            <!--&lt;!&ndash;<AppenderRef ref="errorlog" level="warn" />&ndash;&gt;-->
-        <!--</Logger>-->
-        <!--<Logger name="org.apache.activemq" level="info" additivity="false"-->
-                <!--includeLocation="true">-->
-            <!--<AppenderRef ref="stdout" level="debug"/>-->
-            <!--&lt;!&ndash;<AppenderRef ref="debuglog" level="debug" />&ndash;&gt;-->
-            <!--&lt;!&ndash;<AppenderRef ref="errorlog" level="warn" />&ndash;&gt;-->
-        <!--</Logger>-->
-
-        <!--<Logger name="io.netty" level="info" additivity="false"-->
-                <!--includeLocation="true">-->
-            <!--<AppenderRef ref="stdout" level="debug"/>-->
-        <!--</Logger>-->
-
-
-        <!--<Logger name="com.datastax.driver.core" level="info" additivity="false"-->
-                <!--includeLocation="true">-->
-            <!--<AppenderRef ref="stdout" level="debug"/>-->
-        <!--</Logger>-->
-
-        <!--<Logger name="com.gargoylesoftware" level="fatal" additivity="false"-->
-                <!--includeLocation="true">-->
-            <!--<AppenderRef ref="stdout" level="debug"/>-->
-        <!--</Logger>-->
-        <!--<Logger name="org.apache.http" level="info" additivity="false"-->
-                <!--includeLocation="true">-->
-            <!--<AppenderRef ref="stdout" level="debug"/>-->
-        <!--</Logger>-->
-
+        <!--
+        <Logger name="org.apache.camel" level="debug" additivity="false"
+                includeLocation="true">
+            <AppenderRef ref="stdout" level="info"/>
+            <AppenderRef ref="debuglog" level="debug"/>
+            <AppenderRef ref="errorlog" level="warn"/>
+        </Logger>
+        -->
         <Root level="trace" includeLocation="true">
-            <AppenderRef ref="stdout" />
+            <AppenderRef ref="stdout"/>
         </Root>
     </Loggers>
 </Configuration>
