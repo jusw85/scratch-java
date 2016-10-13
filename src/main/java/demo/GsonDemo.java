@@ -1,5 +1,6 @@
 package demo;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.google.common.base.MoreObjects;
@@ -93,7 +94,9 @@ public class GsonDemo {
     private static class UserTypeAdapter extends TypeAdapter<User> {
         @Override
         public void write(JsonWriter out, User user) throws IOException {
-            Map<String, String> props = new ObjectMapper().convertValue(user, Map.class);
+            TypeReference<Map<String, String>> typeRef = new TypeReference<Map<String, String>>() {
+            };
+            Map<String, String> props = new ObjectMapper().convertValue(user, typeRef);
             props.values().removeIf(Objects::isNull);
             String userStr = Joiner.on(",").withKeyValueSeparator("=").join(props);
             out.beginObject();

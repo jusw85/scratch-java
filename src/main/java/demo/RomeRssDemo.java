@@ -1,9 +1,10 @@
 package demo;
 
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
+
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.io.SyndFeedInput;
+import com.rometools.rome.io.XmlReader;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -16,9 +17,7 @@ public class RomeRssDemo {
         SyndFeedInput input = new SyndFeedInput();
         SyndFeed feed = input.build(new XmlReader(in));
         List<SyndEntry> entries = feed.getEntries();
-        for (SyndEntry entry : entries) {
-            System.out.println(entry);
-        }
+        entries.forEach(System.out::println);
     }
 
 }

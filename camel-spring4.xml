@@ -7,7 +7,7 @@
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
             http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <bean id="tb" class="test.camel.component.TestBean"/>
+    <bean id="tb" class="camel.component.TestBean"/>
 
     <camel:camelContext allowUseOriginalMessage="false">
 

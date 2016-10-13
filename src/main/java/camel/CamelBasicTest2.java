@@ -1,4 +1,4 @@
-package test.camel;
+package camel;
 
 import io.netty.handler.codec.string.StringDecoder;
 import org.apache.camel.CamelContext;
@@ -16,26 +16,7 @@ class CamelBasicTest2 {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static void main(String[] args) {
-//        SimpleRegistry registry = new SimpleRegistry();
-//        registry.put("hw", new OrbcommTransformer());
-
-//        from("direct:a")
-//                .to("bean:hw?method=transform")
-//                .to("stream:out")
-
-
-//                        .process(new Processor() {
-//                            @Override
-//                            public void process(Exchange exchange) throws Exception {
-////                                System.out.println(exchange);
-//                                System.out.println(exchange.getIn().getBody());
-//                            }
-//                        })
-
-//                        .transform(body().prepend(""))
-//                        .to("stream:out")
-
+    public static void main(String[] args) throws Exception {
         StringDecoder s = new StringDecoder(Charset.forName("UTF-8"));
         SimpleRegistry registry = new SimpleRegistry();
         registry.put("udp-stringdecoder", s);
@@ -46,14 +27,11 @@ class CamelBasicTest2 {
 //                from("netty4:udp://0.0.0.0:6005?decoder=#udp-stringdecoder&disconnectOnNoReply=false&sync=false") //
 //                from("netty4:udp://0.0.0.0:6005?allowDefaultCodec=false&sync=false") //
                 from("netty4:udp://0.0.0.0:6005?allowDefaultCodec=false&sync=false") //
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
+                        .process(exchange -> {
 //                                byte[] body = exchange.getIn().getBody(byte[].class);
 //                                exchange.getIn().setBody(body);
-                                String s = exchange.getIn().getBody(String.class);
-                                exchange.getIn().setBody(s);
-                            }
+                            String s1 = exchange.getIn().getBody(String.class);
+                            exchange.getIn().setBody(s1);
                         })
 //                        .transform(body().prepend("")) //
                         .to("stream:out")
@@ -75,4 +53,5 @@ class CamelBasicTest2 {
             e.printStackTrace();
         }
     }
+
 }

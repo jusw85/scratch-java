@@ -1,4 +1,4 @@
-package test.camel;
+package camel;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

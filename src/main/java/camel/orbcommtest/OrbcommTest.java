@@ -1,4 +1,4 @@
-package test.camel.orbcommtest;
+package camel.orbcommtest;
 
 import com.google.common.base.Strings;
 import org.apache.camel.CamelContext;
@@ -18,7 +18,6 @@ public class OrbcommTest {
         }
 
         Main main = new Main();
-        main.enableHangupSupport();
         main.setFileApplicationContextUri(camelConfigFile);
         main.addMainListener(new MainListenerSupport() {
                                  public void afterStart(MainSupport main) {

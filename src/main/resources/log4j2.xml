@@ -2,38 +2,17 @@
 <!-- TRACE > DEBUG > INFO > WARN > ERROR > FATAL -->
 <Configuration status="WARN">
     <Appenders>
-        <!--
-        <RollingFile name="debuglog" fileName="./logs/debug.log"
-                     filePattern="./logs/debug.log.%i">
-            <PatternLayout pattern="[%-5p] [%d{dd/MM/yy HH:mm a}] [%C:%L] - %m%n"/>
-            <Policies>
-                <SizeBasedTriggeringPolicy size="2 MB"/>
-            </Policies>
-            <DefaultRolloverStrategy fileIndex="min" max="5"/>
-        </RollingFile>
-        <RollingFile name="errorlog" fileName="./logs/error.log"
-                     filePattern="./logs/error.log.%i">
-            <PatternLayout pattern="[%-5p] [%d{dd/MM/yy HH:mm a}] [%C:%L] - %m%n"/>
-            <Policies>
-                <SizeBasedTriggeringPolicy size="2 MB"/>
-            </Policies>
-            <DefaultRolloverStrategy fileIndex="min" max="5"/>
-        </RollingFile>
-        -->
         <Console name="stdout" target="SYSTEM_OUT">
             <PatternLayout pattern="[%-5p] [%d{dd/MM/yy HH:mm a}] [%C:%L] - %m%n"/>
-            <!--<PatternLayout pattern="%highlight{[%-5p]} [%d{dd/MM/yy HH:mm a}] [%C:%L] - %style{%m}{bright}%n" />-->
         </Console>
     </Appenders>
     <Loggers>
-        <!--
-        <Logger name="org.apache.camel" level="debug" additivity="false"
-                includeLocation="true">
-            <AppenderRef ref="stdout" level="info"/>
-            <AppenderRef ref="debuglog" level="debug"/>
-            <AppenderRef ref="errorlog" level="warn"/>
-        </Logger>
-        -->
+        <Logger name="org.springframework" level="info"
+                includeLocation="true"/>
+        <Logger name="org.apache.camel" level="info"
+                includeLocation="true"/>
+        <Logger name="org.apache.activemq" level="info"
+                includeLocation="true"/>
         <Root level="trace" includeLocation="true">
             <AppenderRef ref="stdout"/>
         </Root>

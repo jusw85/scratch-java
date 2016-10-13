@@ -1,4 +1,4 @@
-package test.camel;
+package camel;
 
 public class Main {
 
