@@ -8,8 +8,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.jms.ConnectionFactory;
 import java.nio.file.Files;
@@ -18,12 +16,11 @@ import java.nio.file.Paths;
 
 class CamelDemo {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-
     public static void main(String[] args) throws Exception {
 //        testBasicRoute();
 //        testFtp();
-//        testProcessor();
+//        testUdp();
+        testProcessor();
     }
 
     public static void testBasicRoute() throws Exception {
@@ -70,21 +67,30 @@ class CamelDemo {
         ctx.stop();
     }
 
+    /**
+     * Convoluted example to demonstrate techniques
+     */
     public static void testProcessor() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         registry.put("myprocessor", new MyProcessor());
 
         CamelContext context = new DefaultCamelContext(registry);
+        context.setAllowUseOriginalMessage(false);
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:in")
+                        .unmarshal().string("UTF-8")
+                        .split(body().tokenize("\n")).streaming()
                         .to("bean:myprocessor?method=process")
+                        .filter(simple("${body} != null"))
                         .filter(body().isNotNull())
+                        .choice().when(body().isNull()).stop().otherwise()
                         .process(exchange -> {
                             Message msg = exchange.getIn();
                             String payload = '-' + msg.getBody(String.class);
                             msg.setBody(payload.getBytes());
                         })
+                        .marshal().string("UTF-8")
                         .to("stream:out");
             }
         });
@@ -92,9 +98,25 @@ class CamelDemo {
         ProducerTemplate template = context.createProducerTemplate();
         context.start();
         for (int i = 'a'; i <= 'z'; i++) {
-            template.sendBody("direct:in", (char) i);
+            String msg = String.valueOf((char) i) + "\n";
+            template.sendBody("direct:in", msg);
         }
         Thread.sleep(2000);
+        context.stop();
+    }
+
+    public static void testUdp() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("netty4:udp://0.0.0.0:4998" +
+                        "?allowDefaultCodec=false" +
+                        "&sync=false")
+                        .to("stream:out");
+            }
+        });
+        context.start();
+        Thread.sleep(Long.MAX_VALUE);
         context.stop();
     }
 

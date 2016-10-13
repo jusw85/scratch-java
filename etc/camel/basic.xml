@@ -8,17 +8,28 @@
             http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <camel:camelContext allowUseOriginalMessage="false">
-
         <camel:route>
-            <camel:from uri="direct:a"/>
+            <camel:from uri="direct:in"/>
 
-            <!--<camel:marshal>-->
-                <!--<camel:string charset="UTF-8"/>-->
-            <!--</camel:marshal>-->
+            <camel:unmarshal>
+                <camel:string charset="UTF-8"/>
+            </camel:unmarshal>
+            <camel:transform>
+                <camel:simple>${body}\n</camel:simple>
+            </camel:transform>
+            <camel:marshal>
+                <camel:string charset="UTF-8"/>
+            </camel:marshal>
 
             <camel:multicast parallelProcessing="true">
                 <camel:to uri="stream:out"/>
+                <camel:to uri="direct:out"/>
             </camel:multicast>
+        </camel:route>
+
+        <camel:route>
+            <camel:from uri="direct:out"/>
+            <camel:stop/>
         </camel:route>
     </camel:camelContext>
 
