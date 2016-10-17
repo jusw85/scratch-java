@@ -20,7 +20,7 @@ class CamelDemo {
 //        testBasicRoute();
 //        testFtp();
 //        testUdp();
-        testProcessor();
+//        testProcessor();
     }
 
     public static void testBasicRoute() throws Exception {
@@ -67,6 +67,21 @@ class CamelDemo {
         ctx.stop();
     }
 
+    public static void testUdp() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("netty4:udp://0.0.0.0:4998" +
+                        "?allowDefaultCodec=false" +
+                        "&sync=false")
+                        .to("stream:out");
+            }
+        });
+        context.start();
+        Thread.sleep(Long.MAX_VALUE);
+        context.stop();
+    }
+
     /**
      * Convoluted example to demonstrate techniques
      */
@@ -102,21 +117,6 @@ class CamelDemo {
             template.sendBody("direct:in", msg);
         }
         Thread.sleep(2000);
-        context.stop();
-    }
-
-    public static void testUdp() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.addRoutes(new RouteBuilder() {
-            public void configure() {
-                from("netty4:udp://0.0.0.0:4998" +
-                        "?allowDefaultCodec=false" +
-                        "&sync=false")
-                        .to("stream:out");
-            }
-        });
-        context.start();
-        Thread.sleep(Long.MAX_VALUE);
         context.stop();
     }
 
