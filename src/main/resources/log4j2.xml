@@ -13,6 +13,8 @@
                 includeLocation="true"/>
         <Logger name="org.apache.activemq" level="info"
                 includeLocation="true"/>
+        <Logger name="org.apache.http" level="info"
+                includeLocation="true"/>
         <Root level="trace" includeLocation="true">
             <AppenderRef ref="stdout"/>
         </Root>
