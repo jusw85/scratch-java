@@ -8,7 +8,8 @@
             http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="tcp://192.168.1.151:61616"/>
+        <!--<property name="brokerURL" value="tcp://1.2.3.4:61616"/>-->
+        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
         <property name="useAsyncSend" value="true"/>
         <property name="watchTopicAdvisories" value="false"/>
     </bean>
@@ -20,11 +21,13 @@
     </bean>
 
     <bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">
+        <!--<property name="connectionFactory" ref="jmsConnectionFactory"/>-->
         <property name="connectionFactory" ref="pooledConnectionFactory"/>
-        <property name="clientId" value="cameltest"/>
+        <property name="clientId" value="cameldemo"/>
         <property name="acknowledgementModeName" value="AUTO_ACKNOWLEDGE"/>
         <property name="deliveryPersistent" value="false"/>
-        <property name="concurrentConsumers" value="8"/>
+        <!--<property name="concurrentConsumers" value="8"/>-->
+        <property name="concurrentConsumers" value="1"/>
     </bean>
 
     <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
@@ -33,7 +36,7 @@
 
     <camel:camelContext>
         <camel:route>
-            <camel:from uri="activemq:topic:KLAVER.DATA.Topic"/>
+            <camel:from uri="activemq:topic:mytopicname"/>
             <camel:to uri="stream:out"/>
         </camel:route>
     </camel:camelContext>

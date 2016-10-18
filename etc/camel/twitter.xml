@@ -7,7 +7,7 @@
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
             http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <bean id="twitterBean" class="camel.CamelSpringDemo.TwitterProcessor"/>
+    <bean id="twitterBean" class="demo.CamelSpringDemo.TwitterProcessor"/>
 
     <camel:camelContext allowUseOriginalMessage="false">
         <camel:route>

@@ -109,6 +109,11 @@
         <!--<artifactId>netty-all</artifactId>-->
         <!--<version>4.0.31.Final</version>-->
         <!--</dependency>-->
+        <!--<dependency>-->
+        <!--<groupId>org.apache.activemq</groupId>-->
+        <!--<artifactId>activemq-core</artifactId>-->
+        <!--<version>5.7.0</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.apache.activemq</groupId>
@@ -120,21 +125,16 @@
             <artifactId>activemq-broker</artifactId>
             <version>5.14.1</version>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>org.apache.activemq</groupId>-->
-        <!--<artifactId>activemq-pool</artifactId>-->
-        <!--<version>5.14.1</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--<groupId>org.apache.activemq</groupId>-->
-        <!--<artifactId>activemq-core</artifactId>-->
-        <!--<version>5.7.0</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--<groupId>org.apache.activemq</groupId>-->
-        <!--<artifactId>activemq-camel</artifactId>-->
-        <!--<version>5.14.1</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-pool</artifactId>
+            <version>5.14.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-camel</artifactId>
+            <version>5.14.1</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>

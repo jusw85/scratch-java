@@ -1,4 +1,4 @@
-package camel;
+package demo;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
