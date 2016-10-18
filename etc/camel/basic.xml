@@ -7,11 +7,26 @@
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
             http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <bean id="processor" class="camel.CamelSpringDemo"/>
+    <bean id="processor" class="camel.CamelSpringDemo">
+        <property name="message" value="count: "/>
+    </bean>
 
     <camel:camelContext allowUseOriginalMessage="false">
         <camel:route>
             <camel:from uri="direct:in"/>
+            <camel:choice>
+                <camel:when>
+                    <camel:simple>${body} != null</camel:simple>
+                    <camel:to uri="direct:main"/>
+                </camel:when>
+                <camel:otherwise>
+                    <camel:to uri="log:out?level=WARN"/>
+                </camel:otherwise>
+            </camel:choice>
+        </camel:route>
+
+        <camel:route>
+            <camel:from uri="direct:main"/>
 
             <camel:unmarshal>
                 <camel:string charset="UTF-8"/>
@@ -28,6 +43,7 @@
                 <camel:to uri="bean:processor?method=increment"/>
                 <camel:to uri="direct:out"/>
             </camel:multicast>
+            <camel:stop/>
         </camel:route>
 
         <camel:route>

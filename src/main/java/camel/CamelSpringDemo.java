@@ -19,15 +19,14 @@ public class CamelSpringDemo {
         }
     };
 
+    private String message;
     private int i = 0;
 
     public static void main(String[] args) throws Exception {
 //        run("etc/camel/basic.xml", 3000L, COUNTER);
-
+//        run("etc/camel/exception.xml", 3000L, COUNTER);
 //        run("etc/camel/facebook.xml", 10000L);
-
 //        run("etc/camel/twitter.xml", 10000L);
-
 //        run("etc/camel/rss.xml", 10000L);
     }
 
@@ -53,8 +52,16 @@ public class CamelSpringDemo {
         mainThread.join();
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public void increment() {
-        System.out.println("count: " + i++);
+        System.out.println(message + i++);
     }
 
     public static class TwitterProcessor {

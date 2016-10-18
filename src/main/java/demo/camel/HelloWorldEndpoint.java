@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package camel.component;
+package demo.camel;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -26,20 +26,37 @@ import org.apache.camel.impl.DefaultEndpoint;
  */
 public class HelloWorldEndpoint extends DefaultEndpoint {
 
+    private String consumerType;
+
     public HelloWorldEndpoint(String uri, HelloWorldComponent component) {
         super(uri, component);
     }
 
-    public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException("You can't send messages to this producer");
-//        return new HelloWorldProducer(this);
+    public Consumer createConsumer(Processor processor) throws Exception {
+        if (consumerType == null || consumerType.equals("polling")) {
+            return new HelloWorldConsumerPolling(this, processor);
+        } else if (consumerType.equals("thread")) {
+            return new HelloWorldConsumerThread(this, processor);
+        } else {
+            throw new IllegalArgumentException("Unknown consumer type: " + consumerType);
+        }
     }
 
-    public Consumer createConsumer(Processor processor) throws Exception {
-        return new HelloWorldConsumer2(this, processor);
+    public Producer createProducer() throws Exception {
+//        throw new UnsupportedOperationException("You can't send messages to this producer");
+        return new HelloWorldProducer(this);
     }
 
     public boolean isSingleton() {
         return true;
     }
+
+    public String getConsumerType() {
+        return consumerType;
+    }
+
+    public void setConsumerType(String consumerType) {
+        this.consumerType = consumerType;
+    }
+
 }
