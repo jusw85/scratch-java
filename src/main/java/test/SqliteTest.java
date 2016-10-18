@@ -1,5 +1,8 @@
 package test;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -7,6 +10,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class SqliteTest {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public static void main(String[] args) throws Exception {
 

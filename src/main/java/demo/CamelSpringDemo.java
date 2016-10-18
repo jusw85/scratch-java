@@ -1,11 +1,15 @@
 package demo;
 
+import com.codahale.metrics.Counter;
+import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainListenerSupport;
 import org.apache.camel.main.MainSupport;
 import org.apache.camel.spring.Main;
 import twitter4j.Status;
+
+import java.util.Map;
 
 public class CamelSpringDemo {
 
@@ -34,12 +38,29 @@ public class CamelSpringDemo {
         }
     };
 
+    private static final MainListenerSupport METRICS = new MainListenerSupport() {
+        public void afterStart(MainSupport main) {
+            CamelContext context = main.getCamelContexts().get(0);
+
+            ProducerTemplate template = context.createProducerTemplate();
+            for (int i = 0; i < 10; i++) {
+                template.sendBody("direct:in", String.valueOf(i));
+            }
+
+            MetricLoggerSupport metricLoggerSupport =
+                    (MetricLoggerSupport) context.getRegistry().lookupByName("metricLoggerSupport");
+            metricLoggerSupport.printStats();
+
+        }
+    };
+
     private String message;
     private int i = 0;
 
     public static void main(String[] args) throws Exception {
 //        run("etc/camel/basic.xml", 3000L, COUNTER);
 //        run("etc/camel/exception.xml", 3000L, COUNTER);
+//        run("etc/camel/metric.xml", 120000L, METRICS);
 //        run("etc/camel/jms.xml", 5000L, JMS);
 //        run("etc/camel/facebook.xml", 10000L);
 //        run("etc/camel/twitter.xml", 10000L);
@@ -83,6 +104,25 @@ public class CamelSpringDemo {
     public static class TwitterProcessor {
         public String handleTweet(Status status) {
             return status.toString();
+        }
+    }
+
+    public static class MetricLoggerSupport {
+        private MetricRegistry metricRegistry;
+
+        public MetricRegistry getMetricRegistry() {
+            return metricRegistry;
+        }
+
+        public void setMetricRegistry(MetricRegistry metricRegistry) {
+            this.metricRegistry = metricRegistry;
+        }
+
+        public void printStats() {
+            System.out.println("Printing counters");
+            for (Map.Entry<String, Counter> counter : metricRegistry.getCounters().entrySet()) {
+                System.out.println(counter.getKey() + ": " + counter.getValue().getCount());
+            }
         }
     }
 
