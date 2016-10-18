@@ -37,13 +37,13 @@ public class PostgreSQLDemo {
             try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                 ResultSetMetaData rsm = generatedKeys.getMetaData();
 
-                List<String> columnNames = new ArrayList();
+                List<String> columnNames = new ArrayList<>();
                 for (int i = 1; i <= rsm.getColumnCount(); i++)
                     columnNames.add(rsm.getColumnName(i));
                 System.out.println(Joiner.on(",").join(columnNames));
 
                 while (generatedKeys.next()) {
-                    List<Object> values = new ArrayList();
+                    List<Object> values = new ArrayList<>();
                     for (int i = 1; i <= rsm.getColumnCount(); i++)
                         values.add(generatedKeys.getObject(i));
                     System.out.println(Joiner.on(",").join(values));
