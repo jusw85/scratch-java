@@ -15,7 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExcelDemo {
+public class POIDemo {
 
     public static void main(String[] args) throws Exception {
         Workbook workbook = WorkbookFactory.create(new File("etc/poi.xlsx"));

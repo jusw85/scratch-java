@@ -17,7 +17,6 @@ public class UuidUtil {
         System.out.println(base64);
     }
 
-
     public static UUID bytesToUuid(byte[] bytes) {
         ByteBuffer bb = ByteBuffer.wrap(bytes);
         long firstLong = bb.getLong();
