@@ -61,6 +61,26 @@ public class Snippets {
         }
     }
 
+    public static String normalizeString(String str) {
+        str = str.replace((char) 8216, '\'') // ‘
+                .replace((char) 8217, '\'') // ’
+                .replace((char) 8211, '-') // –
+                .replace((char) 8220, '"') // “
+                .replace((char) 8221, '"') // ”
+                .replace(Character.toString((char) 8230), "...") // …
+                .replace((char) 160, ' ') // nbsp
+                .replace((char) 176, ' ') // °
+                .replace((char) 186, ' ') // º
+                .replace((char) 21, ' ') // nak
+                .replace((char) 20, ' ') // dc4
+                .replace((char) 19, ' ') // dc3
+                .replace((char) 8, ' ') // backspace
+                .replace((char) 7, ' ') // bel
+                .replace((char) 1, ' ') // nul
+        ;
+        return str;
+    }
+
     public static Optional<byte[]> downloadFile(String url) throws IOException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpGet httpget = new HttpGet(url);
