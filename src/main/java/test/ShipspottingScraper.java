@@ -37,31 +37,35 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Shipspotting {
+public class ShipspottingScraper {
+
+    public static final int PHOTOS_START = 0;
+    public static final int PHOTOS_END = 1920;
 
     private static final Logger LOGGER = LogManager.getLogger();
-
     private static final Random RANDOM = new Random();
     private static final int NUM_RETRIES = 3;
-
     private static final long MIN_REQUEST_DELAY = 20000L;
     private static final long MAX_REQUEST_DELAY = 30000L;
-
-    public static final int PHOTOS_START = 1160064;
-    public static final int PHOTOS_END = 2012798;
-
     private static final String[] KEYS = {"photoId", "shipName", "imo"};
     private static final Type[] TYPES = {String.class, String.class, String.class};
-
+    private static final Pattern IMO_PATTERN = Pattern.compile("(?i)IMO:\\s*(\\d+)");
+    private static final Pattern ID_PATTERN = Pattern.compile("(?i)lid=(\\d+)");
     private static Connection connection;
     private static String dbFile = "./db/marinetraffic";
 
-    private static final Pattern IMO_PATTERN = Pattern.compile("(?i)IMO:\\s*(\\d+)");
-    private static final Pattern ID_PATTERN = Pattern.compile("(?i)lid=(\\d+)");
-
-//    http://www.shipspotting.com/gallery/photo.php?lid=2414382
+    //    http://www.shipspotting.com/gallery/photo.php?lid=2414382
 //    http://www.shipspotting.com/photos/small/2/8/3/2414382.jpg
 //    http://www.shipspotting.com/photos/middle/1/8/3/2414381.jpg
+    private static String BASE_URL = "http://www.shipspotting.com/gallery/search.php?" +
+            "page_limit=192&limitstart=$1&" +
+            "search_title=&search_title_option=1&" +
+            "search_imo=&search_pen_no=&" +
+            "search_mmsi=&search_eni=&search_callsign=&" +
+            "search_category_1=-99&search_cat1childs=&search_uid=&" +
+            "search_country=&search_port=&search_subports=&search_flag=&search_homeport=&" +
+            "search_adminstatus=&search_classsociety=&search_builder=&search_buildyear1=&" +
+            "search_owner=&search_manager=&sortkey=p.lid&sortorder=desc&page_limit=192&viewtype=1";
 
     public static void main(String[] args) throws Exception {
         initDb();
@@ -72,6 +76,19 @@ public class Shipspotting {
 //        System.out.println(json);
     }
 
+    private static void scrape() throws Exception {
+        for (int i = PHOTOS_START; i < PHOTOS_END; i += 192) {
+            String url = BASE_URL.replace("$1", String.valueOf(i));
+            String html = getHtml(url);
+            if (html == null)
+                continue;
+            List<JSONObject> objs = transformDetails(html);
+            for (JSONObject obj : objs) {
+                insertShip(obj);
+            }
+            Thread.sleep((long) (RANDOM.nextDouble() * (MAX_REQUEST_DELAY - MIN_REQUEST_DELAY)) + MIN_REQUEST_DELAY);
+        }
+    }
 
     private static List<JSONObject> transformDetails(String html) throws Exception {
         List<JSONObject> list = new ArrayList<>();
@@ -110,30 +127,6 @@ public class Shipspotting {
             list.add(object);
         }
         return list;
-    }
-
-    private static String BASE_URL = "http://www.shipspotting.com/gallery/search.php?" +
-            "page_limit=192&limitstart=$1&" +
-            "search_title=&search_title_option=1&" +
-            "search_imo=&search_pen_no=&" +
-            "search_mmsi=&search_eni=&search_callsign=&" +
-            "search_category_1=-99&search_cat1childs=&search_uid=&" +
-            "search_country=&search_port=&search_subports=&search_flag=&search_homeport=&" +
-            "search_adminstatus=&search_classsociety=&search_builder=&search_buildyear1=&" +
-            "search_owner=&search_manager=&sortkey=p.lid&sortorder=desc&page_limit=192&viewtype=1";
-
-    private static void scrape() throws Exception {
-        for (int i = PHOTOS_START; i < PHOTOS_END; i+= 192) {
-            String url = BASE_URL.replace("$1", String.valueOf(i));
-            String html = getHtml(url);
-            if (html == null)
-                continue;
-            List<JSONObject> objs = transformDetails(html);
-            for (JSONObject obj : objs) {
-                insertShip(obj);
-            }
-            Thread.sleep((long) (RANDOM.nextDouble() * (MAX_REQUEST_DELAY - MIN_REQUEST_DELAY)) + MIN_REQUEST_DELAY);
-        }
     }
 
     private static void prepareStatement(PreparedStatement stmt, int startIdx,
@@ -182,13 +175,12 @@ public class Shipspotting {
         }
     }
 
-    private static void initDb() throws Exception {
+    private static void initDb() throws IOException, ClassNotFoundException, SQLException {
         FileUtils.touch(new File(dbFile));
         Class.forName("org.sqlite.JDBC");
         connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile);
         try (PreparedStatement statement = connection.prepareStatement(
-                "CREATE TABLE IF NOT EXISTS ships " +
-                        "(photoId TEXT UNIQUE, shipName TEXT, imo TEXT)");) {
+                "CREATE TABLE IF NOT EXISTS ships (photoId TEXT UNIQUE, shipName TEXT, imo TEXT)");) {
             statement.executeUpdate();
         }
     }
@@ -211,7 +203,7 @@ public class Shipspotting {
                 browserVersion = BrowserVersion.EDGE;
                 break;
             default:
-                browserVersion = BrowserVersion.FIREFOX_38;
+                browserVersion = BrowserVersion.FIREFOX_45;
         }
         try (WebClient webClient = new WebClient(browserVersion);) {
             webClient.getOptions().setJavaScriptEnabled(false);
