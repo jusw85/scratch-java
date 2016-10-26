@@ -1,4 +1,4 @@
-package test;
+package scrapers;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -147,7 +147,7 @@ public class MarineTrafficLatLong {
                 browserVersion = BrowserVersion.EDGE;
                 break;
             default:
-                browserVersion = BrowserVersion.FIREFOX_38;
+                browserVersion = BrowserVersion.FIREFOX_45;
         }
         try (WebClient webClient = new WebClient(browserVersion);) {
             webClient.getOptions().setJavaScriptEnabled(false);

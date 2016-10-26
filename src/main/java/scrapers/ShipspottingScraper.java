@@ -1,14 +1,7 @@
-package test;
+package scrapers;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
 import com.google.common.base.Optional;
 import org.apache.commons.io.FileUtils;
-import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -21,8 +14,6 @@ import util.DateTimeUtil;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.net.SocketTimeoutException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -32,7 +23,6 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,17 +33,12 @@ public class ShipspottingScraper {
     public static final int PHOTOS_END = 1920;
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Random RANDOM = new Random();
-    private static final int NUM_RETRIES = 3;
-    private static final long MIN_REQUEST_DELAY = 20000L;
-    private static final long MAX_REQUEST_DELAY = 30000L;
-    private static final String[] KEYS = {"photoId", "shipName", "imo"};
-    private static final Type[] TYPES = {String.class, String.class, String.class};
     private static final Pattern IMO_PATTERN = Pattern.compile("(?i)IMO:\\s*(\\d+)");
     private static final Pattern ID_PATTERN = Pattern.compile("(?i)lid=(\\d+)");
+    private static final String[] KEYS = {"photoId", "shipName", "imo"};
+    private static final Type[] TYPES = {String.class, String.class, String.class};
     private static Connection connection;
     private static String dbFile = "./db/marinetraffic";
-
     //    http://www.shipspotting.com/gallery/photo.php?lid=2414382
 //    http://www.shipspotting.com/photos/small/2/8/3/2414382.jpg
 //    http://www.shipspotting.com/photos/middle/1/8/3/2414381.jpg
@@ -68,7 +53,7 @@ public class ShipspottingScraper {
             "search_owner=&search_manager=&sortkey=p.lid&sortorder=desc&page_limit=192&viewtype=1";
 
     public static void main(String[] args) throws Exception {
-        initDb();
+        initSQLiteDb();
         scrape();
 
 //        String html = FileUtils.readFileToString(new File("./res/shipspotting.html"));
@@ -79,14 +64,17 @@ public class ShipspottingScraper {
     private static void scrape() throws Exception {
         for (int i = PHOTOS_START; i < PHOTOS_END; i += 192) {
             String url = BASE_URL.replace("$1", String.valueOf(i));
-            String html = getHtml(url);
-            if (html == null)
-                continue;
-            List<JSONObject> objs = transformDetails(html);
-            for (JSONObject obj : objs) {
-                insertShip(obj);
+            try (WebClientWrapper webClient = new WebClientWrapper(true)) {
+                String html = webClient.getHtml(url);
+                if (html == null)
+                    continue;
+                List<JSONObject> objs = transformDetails(html);
+                System.out.format("Inserting %d objects into database", objs.size());
+                for (JSONObject obj : objs) {
+                    insertShip(obj);
+                }
+                webClient.sleep();
             }
-            Thread.sleep((long) (RANDOM.nextDouble() * (MAX_REQUEST_DELAY - MIN_REQUEST_DELAY)) + MIN_REQUEST_DELAY);
         }
     }
 
@@ -175,7 +163,7 @@ public class ShipspottingScraper {
         }
     }
 
-    private static void initDb() throws IOException, ClassNotFoundException, SQLException {
+    private static void initSQLiteDb() throws IOException, ClassNotFoundException, SQLException {
         FileUtils.touch(new File(dbFile));
         Class.forName("org.sqlite.JDBC");
         connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile);
@@ -185,70 +173,11 @@ public class ShipspottingScraper {
         }
     }
 
-    private static void insertShip(JSONObject obj) throws Exception {
+    private static void insertShip(JSONObject obj) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(
                 "INSERT OR REPLACE INTO ships VALUES (?, ?, ?)");) {
             prepareStatement(statement, 1, obj, KEYS, TYPES);
             statement.executeUpdate();
-        }
-    }
-
-    private static String getHtml(String url) throws Exception {
-        BrowserVersion browserVersion;
-        switch (RANDOM.nextInt(2)) {
-            case 0:
-                browserVersion = BrowserVersion.CHROME;
-                break;
-            case 1:
-                browserVersion = BrowserVersion.EDGE;
-                break;
-            default:
-                browserVersion = BrowserVersion.FIREFOX_45;
-        }
-        try (WebClient webClient = new WebClient(browserVersion);) {
-            webClient.getOptions().setJavaScriptEnabled(false);
-            webClient.getOptions().setCssEnabled(false);
-            webClient.getOptions().setAppletEnabled(false);
-
-            WebRequest request = new WebRequest(new URL(url), HttpMethod.GET);
-            try {
-                Page page = getPage(webClient, request);
-                String html = page.getWebResponse().getContentAsString();
-                return html;
-            } catch (IOException | FailingHttpStatusCodeException e) {
-            }
-        }
-        return null;
-    }
-
-    private static <P extends Page> P getPage(WebClient webClient, WebRequest request)
-            throws FailingHttpStatusCodeException, IOException {
-        LOGGER.info("Grabbing {}", request.getUrl());
-        int i = NUM_RETRIES;
-        while (true) {
-            try {
-                return webClient.getPage(request);
-            } catch (ConnectTimeoutException | SocketTimeoutException e) {
-                LOGGER.warn(e);
-                if (i-- <= 0) throw e;
-            } catch (FailingHttpStatusCodeException e) {
-                LOGGER.warn(e);
-                if (e.getStatusCode() == 404) {
-                    throw e;
-                } else {
-                    String html = e.getResponse().getContentAsString();
-                    LOGGER.info(html);
-                    scrapewait();
-                    if (i-- <= 0) throw e;
-                }
-            }
-        }
-    }
-
-    private static void scrapewait() {
-        try {
-            Thread.sleep((long) (RANDOM.nextDouble() * (MAX_REQUEST_DELAY - MIN_REQUEST_DELAY)) + MIN_REQUEST_DELAY);
-        } catch (InterruptedException e) {
         }
     }
 
