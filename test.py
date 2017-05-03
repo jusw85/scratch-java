@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+"""Based on http://xxyxyz.org/line-breaking/"""
+
 from itertools import combinations, chain
 
 
