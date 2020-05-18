@@ -1,0 +1,1 @@
+    <instance objName="obj_number" %1 name="inst_%2" locked="0" code="n = %3&#xA;" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
