@@ -223,10 +223,10 @@ public class MarineTraffic {
                 browserVersion = BrowserVersion.CHROME;
                 break;
             case 1:
-                browserVersion = BrowserVersion.EDGE;
+                browserVersion = BrowserVersion.INTERNET_EXPLORER;
                 break;
             default:
-                browserVersion = BrowserVersion.FIREFOX_45;
+                browserVersion = BrowserVersion.FIREFOX_68;
         }
         try (WebClient webClient = new WebClient(browserVersion);) {
             webClient.getOptions().setJavaScriptEnabled(false);

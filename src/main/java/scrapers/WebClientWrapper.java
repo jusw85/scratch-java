@@ -47,10 +47,10 @@ public class WebClientWrapper implements AutoCloseable {
                 browserVersion = BrowserVersion.CHROME;
                 break;
             case 1:
-                browserVersion = BrowserVersion.EDGE;
+                browserVersion = BrowserVersion.INTERNET_EXPLORER;
                 break;
             default:
-                browserVersion = BrowserVersion.FIREFOX_45;
+                browserVersion = BrowserVersion.FIREFOX_68;
         }
         return browserVersion;
     }
