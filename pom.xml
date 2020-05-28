@@ -78,11 +78,13 @@
         <!--<artifactId>netty-all</artifactId>-->
         <!--<version>4.0.31.Final</version>-->
         <!--</dependency>-->
+
         <!--<dependency>-->
         <!--<groupId>org.apache.activemq</groupId>-->
         <!--<artifactId>activemq-core</artifactId>-->
         <!--<version>5.7.0</version>-->
         <!--</dependency>-->
+
         <!--<dependency>-->
         <!--<groupId>com.opencsv</groupId>-->
         <!--<artifactId>opencsv</artifactId>-->
@@ -383,8 +385,12 @@
             <id>osgeo</id>
             <name>OSGeo Release Repository</name>
             <url>https://repo.osgeo.org/repository/release/</url>
-            <snapshots><enabled>false</enabled></snapshots>
-            <releases><enabled>true</enabled></releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
         </repository>
     </repositories>
 

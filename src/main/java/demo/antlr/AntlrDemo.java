@@ -40,7 +40,7 @@ public class AntlrDemo {
      * Type input, ^D to end
      */
     private static void testHelloParser() throws Exception {
-        String[] args = {"antlr.generated.hello.Hello", "r", "-tokens", "-tree", "-gui"};
+        String[] args = {"demo.antlr.generated.hello.Hello", "r", "-tokens", "-tree", "-gui"};
         org.antlr.v4.gui.TestRig.main(args);
     }
 
