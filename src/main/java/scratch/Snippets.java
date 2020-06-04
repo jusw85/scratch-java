@@ -108,4 +108,18 @@ public class Snippets {
         byte[] encode = encoder.encode(str.getBytes(StandardCharsets.UTF_8));
         return new String(encode, StandardCharsets.US_ASCII);
     }
+
+    public static String hexToRGB(String hex) {
+        int i = Integer.parseInt(hex, 16);
+        int amask = 0XFF000000;
+        int rmask = 0X00FF0000;
+        int gmask = 0X0000FF00;
+        int bmask = 0X000000FF;
+        System.out.println((i & amask) >> 24);
+        System.out.println((i & rmask) >> 16);
+        System.out.println((i & gmask) >> 8);
+        System.out.println((i & bmask));
+        return null;
+    }
+
 }
