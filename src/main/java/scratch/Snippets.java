@@ -1,3 +1,5 @@
+package scratch;
+
 import com.google.common.base.Optional;
 import com.google.common.io.ByteStreams;
 import org.apache.commons.exec.CommandLine;
