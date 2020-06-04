@@ -1,4 +1,4 @@
-package scratch;
+package demo;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,7 +15,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
 
-public class MongoController {
+public class MongoDBDemo {
 
     private static class Driver {
         public static void main(String[] args) {
@@ -26,13 +26,13 @@ public class MongoController {
         }
 
         public static void print(String db, String collection) {
-            JSONArray arr = MongoController.getRecords(db, collection);
+            JSONArray arr = MongoDBDemo.getRecords(db, collection);
             for (int i = 0; i < arr.length(); i++)
                 System.out.println(arr.get(i));
         }
 
         public static void wipe(String db, String collection) {
-            MongoController.deleteRecords(db, collection);
+            MongoDBDemo.deleteRecords(db, collection);
         }
 
         public static void populate(String db, String collection, File file) {
@@ -40,7 +40,7 @@ public class MongoController {
                 while (sc.hasNextLine()) {
                     String line = sc.nextLine();
                     JSONObject obj = new JSONObject(line);
-                    MongoController.addRecord(db, collection, obj);
+                    MongoDBDemo.addRecord(db, collection, obj);
                 }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
