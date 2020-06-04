@@ -14,13 +14,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 public class Snippets {
 
@@ -106,4 +103,9 @@ public class Snippets {
         return Optional.absent();
     }
 
+    public static String toBase64(String str) {
+        Base64.Encoder encoder = Base64.getEncoder();
+        byte[] encode = encoder.encode(str.getBytes(StandardCharsets.UTF_8));
+        return new String(encode, StandardCharsets.US_ASCII);
+    }
 }
